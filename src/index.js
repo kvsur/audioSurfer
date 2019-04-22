@@ -222,7 +222,7 @@ export class AudioSurfer {
      */    load(url, params) {
         this.audioContainer.src = url;
         this.audioContainer.load(url);
-        this.waveVisual.load('http://localhost:1024/audio/222', { method: 'GET', ...params });
+        this.waveVisual.load(url, { method: 'GET', ...params });
     }
 
     /**
