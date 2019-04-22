@@ -1,3 +1,4 @@
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 import { WavDecoder } from './WavDecoder.js';
 import { WaveRender } from './WaveRender.js';
 import { DataTransformer } from './DataTransformer.js';
