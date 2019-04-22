@@ -1,6 +1,6 @@
 {
   "name": "audiosurfer",
-  "version": "1.1.1",
+  "version": "1.2.1",
   "description": "Progressive audio play by Audio,  and render in canvas",
   "main": "lib/audioSurfer.js",
   "scripts": {
@@ -40,7 +40,6 @@
     "webpack-cli": "^3.3.0"
   },
   "dependencies": {
-    "abortcontroller-polyfill": "^1.3.0",
     "qs": "^6.7.0"
   }
 }

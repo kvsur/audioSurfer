@@ -1,4 +1,4 @@
-import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
+// import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 import { WavDecoder } from './WavDecoder.js';
 import { WaveRender } from './WaveRender.js';
 import { DataTransformer } from './DataTransformer.js';
@@ -108,11 +108,11 @@ export class WaveVisual {
 
 
     _loadAudio(srcUrl, srcData, method) {
-        const controller = new AbortController()
-        const signal = controller.signal;
+        // const controller = new AbortController()
+        // const signal = controller.signal;
         const { url, fetchOptions } = this._plugins.DataTransformer(srcUrl, srcData, method);
         const option = {
-            signal,
+            // signal,
             method,
             ...fetchOptions
         }
@@ -133,7 +133,7 @@ export class WaveVisual {
                 console.error(e);
             });
             this._decoder.onabort = () => {
-                controller.abort();
+                // controller.abort();
                 fetchReader.cancel().catch(error => {
                     console.warn('WaveVisual load canceld.');
                 });
