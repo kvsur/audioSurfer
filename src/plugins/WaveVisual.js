@@ -78,7 +78,7 @@ export class WaveVisual {
 
         } else {
             const { data, method } = (options || {});
-            this._loadAudio(audioUrl, data, method);
+            this._loadAudio(audioUrl, method, data);
         }
 
     }
@@ -107,10 +107,10 @@ export class WaveVisual {
     }
 
 
-    _loadAudio(srcUrl, srcData, method) {
+    _loadAudio(srcUrl, method, srcData) {
         // const controller = new AbortController()
         // const signal = controller.signal;
-        const { url, fetchOptions } = this._plugins.DataTransformer(srcUrl, srcData, method);
+        const { url, fetchOptions } = this._plugins.DataTransformer(srcUrl, method, srcData);
         const option = {
             // signal,
             method,

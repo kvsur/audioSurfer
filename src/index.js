@@ -1,3 +1,4 @@
+import { stringify } from 'qs';
 import { WaveVisual } from './plugins/WaveVisual';
 import { AudioWrapper } from './plugins/AudioWrapper';
 export class AudioSurfer {
@@ -7,6 +8,7 @@ export class AudioSurfer {
     _defaultOptions = {
         color: '#1890ff',
         height: 90,
+        showLog: false,
         onCanplay: () => { },
         onPlaying: () => { },
         onPause: () => { },
@@ -28,6 +30,7 @@ export class AudioSurfer {
     constructor(container, options) {
         this.options = { ...this._defaultOptions, ...options };
         const { height } = this.options;
+        this.showLog = this.options.showLog;
         const ownContainer = document.createElement('div');
         ownContainer.style.cssText = `position: relative; width: 100%; height: ${height}px;`;
         container.appendChild(ownContainer);
@@ -63,6 +66,10 @@ export class AudioSurfer {
         };
     }
 
+    _showLog(method, params) {
+        console.log(`method: ${method}`, `params: ${params}`);
+    }
+
     /**
      * 
      * @private
@@ -73,6 +80,9 @@ export class AudioSurfer {
         const percent = `${((currentTime / duration) * 100).toFixed(4)}%`;
 
         this.audioWrapper.dealProgress({ percent });
+        if (this.showLog) {
+            this._showLog('_dealProgress', { percent });
+        }
     }
 
     /**
@@ -84,6 +94,9 @@ export class AudioSurfer {
         const { duration } = this._state;
         const time = +(duration * progress).toFixed(2);
         this.play2time(time);
+        if (this.showLog) {
+            this._showLog('_onWrapperProgress', { progress });
+        }
     }
 
     /**
@@ -187,6 +200,9 @@ export class AudioSurfer {
         });
         this.audioContainer.currentTime = time;
         this._dealProgress();
+        if (this.showLog) {
+            this._showLog('play2time', { time });
+        }
     }
 
     /**
@@ -197,6 +213,22 @@ export class AudioSurfer {
             isplaying: false
         });
         this.audioContainer.pause();
+    }
+    
+    /**
+     * @public
+     * @param { number } volume 
+     */
+    setVolume(volume) {
+        this.audioContainer.volume = volume;
+        
+    }
+
+    /**
+     * @public
+     */
+    getVolume() {
+        return this.audioContainer.volume;
     }
 
     /**
@@ -219,10 +251,21 @@ export class AudioSurfer {
 
     /**
      * @public
-     */    load(url, params) {
-        this.audioContainer.src = url;
-        this.audioContainer.load(url);
-        this.waveVisual.load('http://localhost:1024/audio/222', { method: 'GET', ...params });
+     */    
+    load(url, params) {
+        if (this.showLog) {
+            this._showLog('load', { url, params });
+        }
+
+        let audioUrl = url;
+        if (params) {
+            audioUrl += `?${stringify(params)}`;
+        }
+        this.audioContainer.src = audioUrl;
+        this.audioContainer.load(audioUrl);
+
+
+        this.waveVisual.load(url, { method: 'GET', ...params });
     }
 
     /**
@@ -230,6 +273,10 @@ export class AudioSurfer {
      * @param { ArrayBuffer } buffer 
      */
     loadBuffer(buffer) {
+        if (this.showLog) {
+            this._showLog('loadBuffer', { buffer });
+        }
+
         if (!buffer || !buffer instanceof ArrayBuffer) return;
 
         const blob = new Blob([buffer]);
@@ -255,5 +302,9 @@ export class AudioSurfer {
         this.audioContainer.removeEventListener('error', this.onError);
 
         this.audioContainer = null;
+
+        if (this.showLog) {
+            this._showLog('destroy', { audioContainer: this.audioContainer });
+        }
     }
 }
