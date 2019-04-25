@@ -161,12 +161,14 @@ export class AudioSurfer {
 
     /**
      * @public
+     * @exports
      */
     canPlay() {
         return this._state.canplay;
     }
 
     /**
+     * @exports
      * @public
      */
     isPlaying() {
@@ -174,6 +176,7 @@ export class AudioSurfer {
     }
 
     /**
+     * @exports
      * @public
      */
     play() {
@@ -184,16 +187,16 @@ export class AudioSurfer {
     }
 
     /**
+     * @exports
      * @public
      */
     play2time(time) {
-        const { onError } = this.options;
         const { duration } = this._state;
 
-        if (time < 0 || time > duration) {
-            onError(new Error('wrong time for play'));
-            return;
-        }
+        let playTime = time;
+
+        playTime = (playTime < 0) && 0 || (playTime > duration) && duration || playTime;
+
         this._setState({
             canplay: false,
             isplaying: false,
@@ -206,6 +209,7 @@ export class AudioSurfer {
     }
 
     /**
+     * @exports
      * @public
      */
     pause() {
@@ -216,6 +220,7 @@ export class AudioSurfer {
     }
     
     /**
+     * @exports
      * @public
      * @param { number } volume 
      */
@@ -225,6 +230,7 @@ export class AudioSurfer {
     }
 
     /**
+     * @exports
      * @public
      */
     getVolume() {
@@ -232,6 +238,7 @@ export class AudioSurfer {
     }
 
     /**
+     * @exports
      * @public
      */
     getCurrentTime() {
@@ -239,6 +246,7 @@ export class AudioSurfer {
     }
 
     /**
+     * @exports
      * @public
      */
     getDuration() {
@@ -250,6 +258,7 @@ export class AudioSurfer {
     }
 
     /**
+     * @exports
      * @public
      */    
     load(url, params) {
@@ -270,6 +279,8 @@ export class AudioSurfer {
 
     /**
      * Load audio data with a arrayBuffer
+     * @exports
+     * @public
      * @param { ArrayBuffer } buffer 
      */
     loadBuffer(buffer) {
@@ -291,6 +302,8 @@ export class AudioSurfer {
 
     /**
      * Destroy this and destroy wave render 
+     * @exports
+     * @public
      */
     destroy() {
         this.waveVisual.abort();
@@ -301,7 +314,8 @@ export class AudioSurfer {
         this.audioContainer.removeEventListener('ended', this.onEnded);
         this.audioContainer.removeEventListener('error', this.onError);
 
-        this.audioContainer = null;
+        // this.audioContainer = null;
+        this.audioContainer.src = '';
 
         if (this.showLog) {
             this._showLog('destroy', { audioContainer: this.audioContainer });
