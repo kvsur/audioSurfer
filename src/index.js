@@ -1,6 +1,7 @@
 import { stringify } from 'qs';
-import { WaveVisual } from './plugins/WaveVisual';
+// import { WaveVisual } from './plugins/WaveVisual';
 import { AudioWrapper } from './plugins/AudioWrapper';
+import { WaveRolling } from 'wave-rolling';
 export class AudioSurfer {
     // A timer for upate audio playing progress with API setInterval
     progressTimer = null;
@@ -43,7 +44,7 @@ export class AudioSurfer {
      * @param { ElementNode } container
      */
     _init(container) {
-        this.waveVisual = new WaveVisual(container, { ...this.options });
+        this.waveVisual = WaveRolling.create(container, { ...this.options });
         this.audioWrapper = new AudioWrapper(container, { ...this.options, onWrapperProgress: ({ progress }) => { this._onWrapperProgress(progress) } });
         this.audioContainer = new Audio();
 
@@ -274,7 +275,7 @@ export class AudioSurfer {
         this.audioContainer.load(audioUrl);
 
 
-        this.waveVisual.load(url, { method: 'GET', ...params });
+        this.waveVisual.load(url, { method: 'GET', data: {...params} });
     }
 
     /**
