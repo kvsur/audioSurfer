@@ -34,11 +34,9 @@ export class AudioSurfer {
         const { height } = this.options;
         this.showLog = this.options.showLog;
         this.justCore = this.options.justCore;
-        if (!this.justCore) {
-            const ownContainer = document.createElement('div');
-            ownContainer.style.cssText = `position: relative; width: 100%; height: ${height}px;`;
-            container.appendChild(ownContainer);
-        }
+        const ownContainer = document.createElement('div');
+        ownContainer.style.cssText = `position: relative; width: 100%; height: ${height}px;`;
+        container.appendChild(ownContainer);
         this._init(ownContainer);
     }
 
