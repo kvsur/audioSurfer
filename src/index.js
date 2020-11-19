@@ -2,8 +2,6 @@ import { stringify } from 'qs';
 // import { WaveVisual } from './plugins/WaveVisual';
 import { AudioWrapper } from './plugins/AudioWrapper';
 import { WaveRolling } from 'wave-rolling';
-
-export const SurferCore = WaveRolling;
 export class AudioSurfer {
     // A timer for upate audio playing progress with API setInterval
     progressTimer = null;
@@ -12,6 +10,7 @@ export class AudioSurfer {
         color: '#1890ff',
         height: 90,
         showLog: false,
+        justCore: false,
         onCanplay: () => { },
         onPlaying: () => { },
         onPause: () => { },
@@ -34,9 +33,12 @@ export class AudioSurfer {
         this.options = { ...this._defaultOptions, ...options };
         const { height } = this.options;
         this.showLog = this.options.showLog;
-        const ownContainer = document.createElement('div');
-        ownContainer.style.cssText = `position: relative; width: 100%; height: ${height}px;`;
-        container.appendChild(ownContainer);
+        this.justCore = this.options.justCore;
+        if (!this.justCore) {
+            const ownContainer = document.createElement('div');
+            ownContainer.style.cssText = `position: relative; width: 100%; height: ${height}px;`;
+            container.appendChild(ownContainer);
+        }
         this._init(ownContainer);
     }
 
@@ -47,6 +49,7 @@ export class AudioSurfer {
      */
     _init(container) {
         this.waveVisual = WaveRolling.create(container, { ...this.options });
+        if (this.justCore) return;
         this.audioWrapper = new AudioWrapper(container, { ...this.options, onWrapperProgress: ({ progress }) => { this._onWrapperProgress(progress) } });
         this.audioContainer = new Audio();
 
@@ -167,6 +170,7 @@ export class AudioSurfer {
      * @exports
      */
     canPlay() {
+        if (this.justCore) return;
         return this._state.canplay;
     }
 
@@ -175,6 +179,7 @@ export class AudioSurfer {
      * @public
      */
     isPlaying() {
+        if (this.justCore) return;
         return this._state.isplaying;
     }
 
@@ -183,6 +188,7 @@ export class AudioSurfer {
      * @public
      */
     play() {
+        if (this.justCore) return;
         this._setState({
             isplaying: true
         });
@@ -194,6 +200,7 @@ export class AudioSurfer {
      * @public
      */
     play2time(time) {
+        if (this.justCore) return;
         const { duration } = this._state;
 
         let playTime = time;
@@ -216,6 +223,7 @@ export class AudioSurfer {
      * @public
      */
     pause() {
+        if (this.justCore) return;
         this._setState({
             isplaying: false
         });
@@ -228,6 +236,7 @@ export class AudioSurfer {
      * @param { number } volume 
      */
     setVolume(volume) {
+        if (this.justCore) return;
         this.audioContainer.volume = volume;
         
     }
@@ -237,6 +246,7 @@ export class AudioSurfer {
      * @public
      */
     getVolume() {
+        if (this.justCore) return;
         return this.audioContainer.volume;
     }
 
@@ -245,6 +255,7 @@ export class AudioSurfer {
      * @public
      */
     getCurrentTime() {
+        if (this.justCore) return;
         return this.audioContainer.currentTime;
     }
 
@@ -253,6 +264,7 @@ export class AudioSurfer {
      * @public
      */
     getDuration() {
+        if (this.justCore) return;
         const duration = this.audioContainer.duration;
         this._setState({
             duration
@@ -268,6 +280,9 @@ export class AudioSurfer {
         if (this.showLog) {
             this._showLog('load', { url, params });
         }
+        this.waveVisual.load(url, { method: 'GET', data: {...params} });
+
+        if (this.justCore) return;
 
         let audioUrl = url;
         if (params) {
@@ -276,8 +291,6 @@ export class AudioSurfer {
         this.audioContainer.src = audioUrl;
         this.audioContainer.load(audioUrl);
 
-
-        this.waveVisual.load(url, { method: 'GET', data: {...params} });
     }
 
     /**
@@ -296,9 +309,10 @@ export class AudioSurfer {
         const blob = new Blob([buffer]);
         const reader = new FileReader();
         reader.onload = () => {
+            this.waveVisual.load(buffer);
+            if (this.justCore) return;
             this.audioContainer.src = reader.result;
             this.audioContainer.load();
-            this.waveVisual.load(buffer);
         };
         reader.readAsDataURL(blob);
     }
@@ -310,6 +324,8 @@ export class AudioSurfer {
      */
     destroy() {
         this.waveVisual.abort();
+
+        if (this.justCore) return;
 
         this.audioContainer.removeEventListener('canplay', this.onCanplay);
         this.audioContainer.removeEventListener('playing', this.onPlaying);
