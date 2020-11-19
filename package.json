@@ -1,6 +1,6 @@
 {
   "name": "audiosurfer",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Progressive audio play by Audio,  and render in canvas",
   "main": "lib/audioSurfer.js",
   "scripts": {
