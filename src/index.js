@@ -2,6 +2,8 @@ import { stringify } from 'qs';
 // import { WaveVisual } from './plugins/WaveVisual';
 import { AudioWrapper } from './plugins/AudioWrapper';
 import { WaveRolling } from 'wave-rolling';
+
+export const SurferCore = WaveRolling;
 export class AudioSurfer {
     // A timer for upate audio playing progress with API setInterval
     progressTimer = null;
